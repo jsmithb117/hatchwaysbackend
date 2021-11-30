@@ -19,7 +19,12 @@
   },
   "homepage": "https://github.com/jsmithb117/hatchwaysbackend#readme",
   "dependencies": {
+    "axios": "^0.24.0",
     "express": "^4.17.1",
+    "node-fetch": "^2.6.6",
     "nodemon": "^2.0.15"
+  },
+  "devDependencies": {
+    "jest": "^27.4.2"
   }
 }
