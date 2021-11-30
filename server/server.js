@@ -2,8 +2,10 @@ const express = require('express');
 const app = express()
 const PORT = 3000
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
+const API = "https://api.hatchways.io/assessment/blog/posts"
+
+app.get('/api/ping', (req, res) => {
+  res.send({"success": true})
 })
 
 app.listen(PORT, () => {
