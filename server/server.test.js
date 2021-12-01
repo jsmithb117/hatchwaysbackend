@@ -1,8 +1,8 @@
-const server = require("./server.js");
+const server = require("./app.js");
 const supertest = require("supertest");
 requestWithSupertest = supertest(server);
 
-describe("Endpoints", () => {
+describe("Tests /api/posts endpoint", () => {
   it("GET /api/ping", async () => {
     const res = await requestWithSupertest.get("/api/ping");
     expect(res.status).toEqual(200);
