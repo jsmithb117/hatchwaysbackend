@@ -19,6 +19,7 @@ app.get("/api/posts", async (req, res) => {
   const tags = req.query.tags;
   const sortBy = req.query.sortBy || "id";
   const direction = req.query.direction || "asc";
+  const testDuplicates = req.query.test || false;
 
   const sortByIsValid = ["id", "reads", "likes", "popularity"].includes(sortBy);
   const directionIsValid = ["asc", "desc"].includes(direction);
@@ -52,7 +53,14 @@ app.get("/api/posts", async (req, res) => {
           tagsInCache.push(cache[tag]);
         })
         return flatten(tagsInCache);
+      }).then((flattened) => {
+        if (testDuplicates) {
+          return [ ...flattened, ...flattened ]
+        } else {
+          return flattened
+        }
       })
+      .then((tested) => dedupe(tested))
       .then((allData) => res.send(sort(allData, sortBy, direction)))
       .catch((err) => res.status(400).send(err));
   }
