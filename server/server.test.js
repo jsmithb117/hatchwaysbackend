@@ -21,7 +21,6 @@ describe("Tests /api/posts endpoint", () => {
     const res = await requestWithSupertest.get("/api/posts?tags=tech&sortBy=likes&direction=as");
     expect(res.body.error).toBe('direction parameter is invalid')
   });
-
   it("responds to /api/posts with data sorted in ascending order by ID if sortBy and direction are not defined", async () => {
     const res = await requestWithSupertest.get("/api/posts?tags=tech");
     const ids = res.body.map((elem, index) => {
@@ -30,7 +29,6 @@ describe("Tests /api/posts endpoint", () => {
     expect(res.body.length).toBe(28);
     expect(ids).toEqual(expect.not.arrayContaining([true]))
   });
-
   it("responds to /api/posts with data sorted by ID if sortBy is defined as 'id'", async () => {
     const res = await requestWithSupertest.get("/api/posts?tags=tech&sortBy=id");
     const ids = res.body.map((elem, index) => {
@@ -39,7 +37,6 @@ describe("Tests /api/posts endpoint", () => {
     expect(res.body.length).toBe(28);
     expect(ids).toEqual(expect.not.arrayContaining([true]))
   });
-
   it("responds to /api/posts with data sorted by reads if sortBy is defined as 'reads'", async () => {
     const res = await requestWithSupertest.get("/api/posts?tags=tech&sortBy=reads");
     const ids = res.body.map((elem, index) => {
@@ -48,7 +45,6 @@ describe("Tests /api/posts endpoint", () => {
     expect(res.body.length).toBe(28);
     expect(ids).toEqual(expect.not.arrayContaining([true]))
   });
-
   it("responds to /api/posts with data sorted by likes if sortBy is defined as 'likes'", async () => {
     const res = await requestWithSupertest.get("/api/posts?tags=tech&sortBy=likes");
     const ids = res.body.map((elem, index) => {
@@ -57,7 +53,6 @@ describe("Tests /api/posts endpoint", () => {
     expect(res.body.length).toBe(28);
     expect(ids).toEqual(expect.not.arrayContaining([true]))
   });
-
   it("responds to /api/posts with data sorted by popularity if sortBy is defined as 'popularity'", async () => {
     const res = await requestWithSupertest.get("/api/posts?tags=tech&sortBy=popularity");
     const ids = res.body.map((elem, index) => {
@@ -66,7 +61,6 @@ describe("Tests /api/posts endpoint", () => {
     expect(res.body.length).toBe(28);
     expect(ids).toEqual(expect.not.arrayContaining([false]))
   });
-
   it("responds to /api/posts with data sorted in descending order if descending is defined as 'desc'", async () => {
     const res = await requestWithSupertest.get("/api/posts?tags=tech&sortBy=popularity&direction=desc");
     const ids = res.body.map((elem, index) => {
@@ -76,8 +70,12 @@ describe("Tests /api/posts endpoint", () => {
     expect(ids).toEqual(expect.not.arrayContaining([false]))
   });
   it('should remove duplicates', async () => {
-    const duplicates = await requestWithSupertest.get("/api/posts?tags=tech&sortBy=popularity&direction=desc&test=true");
+    const duplicates = await requestWithSupertest.get("/api/posts?tags=tech&sortBy=popularity&direction=desc&test=1");
     const normal = await requestWithSupertest.get("/api/posts?tags=tech&sortBy=popularity&direction=desc");
     expect(duplicates.length).toBe(normal.length)
+  })
+  it('should catch errors', async () => {
+    const res = await requestWithSupertest.get("/api/posts?tags=tech&sortBy=popularity&direction=desc&test=2");
+    expect(res.status).toBe(400)
   })
 });

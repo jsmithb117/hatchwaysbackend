@@ -19,7 +19,7 @@ app.get("/api/posts", async (req, res) => {
   const tags = req.query.tags;
   const sortBy = req.query.sortBy || "id";
   const direction = req.query.direction || "asc";
-  const testDuplicates = req.query.test || false;
+  const test = parseInt(req.query.test) || 0;
 
   const sortByIsValid = ["id", "reads", "likes", "popularity"].includes(sortBy);
   const directionIsValid = ["asc", "desc"].includes(direction);
@@ -46,6 +46,12 @@ app.get("/api/posts", async (req, res) => {
       return axios.get(API.concat(`?tag=${tag}`))
   });
     Promise.all(requests)
+    .then((response) => {
+      if (test === 2) {
+        throw new Error();
+      }
+      return response;
+    })
       .then((response) => response.map((resp) => resp.data))
       .then((uncachedData) => {
         tagsNotInCache.forEach((tag, i) => {
@@ -53,13 +59,8 @@ app.get("/api/posts", async (req, res) => {
           tagsInCache.push(cache[tag]);
         })
         return flatten(tagsInCache);
-      }).then((flattened) => {
-        if (testDuplicates) {
-          return [ ...flattened, ...flattened ]
-        } else {
-          return flattened
-        }
       })
+      .then((flattened) => test === 1 ? [ ...flattened, ...flattened ] : flattened)
       .then((tested) => dedupe(tested))
       .then((allData) => res.send(sort(allData, sortBy, direction)))
       .catch((err) => res.status(400).send(err));
