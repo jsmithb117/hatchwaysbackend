@@ -75,4 +75,9 @@ describe("Tests /api/posts endpoint", () => {
     expect(res.body.length).toBe(28);
     expect(ids).toEqual(expect.not.arrayContaining([false]))
   });
+  it('should remove duplicates', async () => {
+    const duplicates = await requestWithSupertest.get("/api/posts?tags=tech&sortBy=popularity&direction=desc&test=true");
+    const normal = await requestWithSupertest.get("/api/posts?tags=tech&sortBy=popularity&direction=desc");
+    expect(duplicates.length).toBe(normal.length)
+  })
 });
