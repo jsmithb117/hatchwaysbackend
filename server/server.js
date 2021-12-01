@@ -2,7 +2,7 @@ const express = require("express");
 const axios = require("axios");
 const sort = require("../functions/sort");
 const flatten = require("../functions/flatten");
-const dedupe = require("../functions/dedupe")
+const dedupe = require("../functions/dedupe");
 const app = express();
 const PORT = 3000;
 
@@ -27,11 +27,12 @@ app.get("/api/posts", async (req, res) => {
   } else if (!directionIsValid) {
     res.status(400).send({ error: "direction parameter is invalid" });
   } else {
-    const splitTrimmedTags = tags.split(",").map((tag) => tag.trim());
-    const requests = splitTrimmedTags.map((tag) =>
-      axios.get(API.concat(`?tag=${tag}`))
-    );
-    Promise.all(requests)
+    Promise.all(
+      tags
+        .split(",")
+        .map((tag) => tag.trim())
+        .map((tag) => axios.get(API.concat(`?tag=${tag}`)))
+    )
       .then((responses) => responses.map((response) => response.data))
       .then((nestedData) => flatten(nestedData))
       .then((unsorted) => sort(unsorted, sortBy, direction))
@@ -42,3 +43,5 @@ app.get("/api/posts", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Express server listening at http://localhost:${PORT}`);
 });
+
+module.exports = app;
